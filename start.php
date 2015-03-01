@@ -59,7 +59,7 @@ function videolist_init() {
 	elgg_extend_view('groups/tool_latest', 'videolist/group_module');
 
 	//add a widget
-	elgg_register_widget_type('videolist', elgg_echo('videolist'), elgg_echo('videolist:widget:description'), "index,profile,dashboard,groups", true);
+	elgg_register_widget_type('videolist', elgg_echo('videolist'), elgg_echo('videolist:widget:description'), "profile,dashboard,groups", true);
 	
 	// Register granular notification for this type
 	register_notification_object('object', 'videolist_item', elgg_echo('videolist:notification:subject'));
