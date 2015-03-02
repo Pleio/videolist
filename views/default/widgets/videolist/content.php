@@ -6,6 +6,7 @@
  */
 
 $widget = elgg_extract("entity", $vars);
+$owner = $widget->getOwnerEntity();
 
 $num = (int) $widget->videos_num;
 if($num < 1){
@@ -15,11 +16,14 @@ if($num < 1){
 $options = array(
 	'type' => 'object',
 	'subtype' => 'videolist_item',
-	'container_guid' => $widget->getOwnerGUID(),
 	'limit' => $num,
 	'full_view' => FALSE,
 	'pagination' => FALSE,
 );
+
+if (!$owner instanceof ElggSite) {
+	$options['container_guid'] = $widget->getOwnerGUID();
+}
 
 if ($content = elgg_list_entities($options)) {
 	echo $content;

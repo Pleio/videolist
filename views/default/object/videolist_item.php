@@ -5,12 +5,11 @@
  * @package ElggVideolist
  */
 
-$full = elgg_extract('full_view', $vars, false);
-$entity = elgg_extract('entity', $vars, false);
-/* @var ElggObject $entity */
+$full = elgg_extract('full_view', $vars, FALSE);
+$entity = elgg_extract('entity', $vars, FALSE);
 
 if (!$entity) {
-	return true;
+	return TRUE;
 }
 
 $owner = $entity->getOwnerEntity();
@@ -61,25 +60,23 @@ if (elgg_in_context('widgets')) {
 
 if ($full && !elgg_in_context('gallery')) {
 
-	$dimensions = elgg_get_config('videolist_dimensions');
+    $dimensions = elgg_get_config('videolist_dimensions');
 	// allow altering dimensions
 	$params = array(
 		'entity' => $entity,
 		'default_dimensions' => $dimensions,
 	);
 	$dimensions = elgg_trigger_plugin_hook('videolist:filter_dimensions', $entity->videotype, $params, $dimensions);
-
+	
 	$content = elgg_view("videolist/watch/{$entity->videotype}", array(
 		'entity' => $entity,
-		'width' => (int) $dimensions['width'],
-		'height' => (int) $dimensions['height'],
+		'width' => '100%',
+		'height' => $dimensions['height'],
 	));
-	$content = "<div class=\"videolist-watch\">$content</div>";
 
 	$params = array(
 		'entity' => $entity,
 		'title' => false,
-		'content' => $content,
 		'metadata' => $metadata,
 		'subtitle' => $subtitle,
 		'tags' => $tags,
@@ -87,12 +84,16 @@ if ($full && !elgg_in_context('gallery')) {
 	$params = $params + $vars;
 	$list_body = elgg_view('object/elements/summary', $params);
 
-	$entity_info = elgg_view_image_block($owner_icon, $list_body);
-
-	echo <<<HTML
-$entity_info
-$body
-HTML;
+	if (elgg_is_xhr()) {
+		echo $content;
+	} else {
+		$content = "<div class=\"videolist-watch\">$content</div>";
+		echo elgg_view('object/elements/full', array(
+				'summary' => $list_body,
+				'icon' => $owner_icon,
+				'body' => $content . $body,
+		));		
+	}
 
 } elseif (elgg_in_context('gallery')) {
 	echo '<div class="videolist-gallery-item">';
